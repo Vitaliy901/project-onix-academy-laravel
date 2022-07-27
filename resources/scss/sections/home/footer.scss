@@ -1,0 +1,87 @@
+.home-footer {
+	background: $common-fc;
+	color: $border-stroke;
+
+	&__wrapper {
+		min-height: 400px;
+		max-width: 1440px;
+		margin: 0 auto;
+		padding: 106px 211px 0 70px;
+		@include box-sizing(border-box); 
+		display: grid;
+		grid-template: auto / repeat(auto-fill, minmax(225px,1fr));
+		gap: 15px;
+
+		div:nth-child(2) {
+			padding-left: 37px;
+
+			@media all and (max-width: $tablets) {
+				padding-left: 0px;
+			}
+		}
+		div:last-child {
+			justify-self: end;
+
+			@media all and (max-width: $desktops) {
+				justify-self: start;
+			}
+			
+		}
+
+		@media all and (max-width: $desktops) {
+			padding: 106px 70px 0;
+		}
+		
+		h3 {
+			@include font (700,18px,25px);
+			color: $button-font;
+			margin-bottom: 14px;
+			letter-spacing: 0.1px;
+		}
+
+		a {
+			color: $border-stroke;
+			@include transition(0.4s);
+
+			&:hover:not(.home-footer-social a) {
+				text-decoration: underline;
+			}
+		}
+
+		p {
+			margin-top: 13px;
+		}
+
+		li {
+			margin-bottom: 13px;
+		}
+
+		.headquarter {
+			justify-self: center;
+			width: 132px;
+
+			@media all and (max-width: $tablets-big) {
+				justify-self: start;
+				margin-bottom: 18px;
+			}
+		}
+
+	}
+
+	.home-footer__cc-wrapper {
+		background: $google-bnt;
+		@include font (700,14px,18px);
+		
+		span {
+			display: block;
+			max-width: 1440px;
+			margin: 0 auto;
+			padding: 31px 45px 31px 70px;
+			@include box-sizing(border-box); 
+			letter-spacing: 0.1px;
+			@media all and (max-width: $phones) {
+				padding: 30px 50px;
+			}
+		}
+	}
+}

@@ -1,0 +1,46 @@
+.article-header {
+	border-bottom: 1px solid $border-stroke;
+	position: fixed;
+	top: 0;
+	width: 100%;
+	background: $button-font;
+	z-index: 1;
+
+	&__inner-wrapper {
+		position: relative;
+		margin: 0 auto;
+		max-width: 1440px;
+		@include flex-sbc;
+		padding: 27px 20px 27px 40px;
+
+		.logo-wrapper--article{
+			padding: 0;
+			
+			a {
+				line-height: 24px;
+				font-size: 20px;
+				letter-spacing: 5px;
+			}
+		}
+
+		.header-links {
+			ul {
+				@include flex-sbw;
+			}
+			a {
+				display: inline-block;
+				font: 700 14px/20px $lora;
+				letter-spacing: 0.5px;
+				text-decoration: none;
+				color: $common-fc;
+				border-bottom: 2px solid rgba(0, 0, 0, 0);
+				padding-bottom: 4px;
+				margin-right: 29px;
+
+				&:hover {
+					border-bottom: 2px solid $links-btn-form;
+				}
+			}
+		}
+	}
+}

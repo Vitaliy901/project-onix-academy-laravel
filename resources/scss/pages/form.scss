@@ -1,0 +1,89 @@
+@import '../sections/form-left.scss';
+
+@import '../sections/form-right.scss';
+
+.form {
+	legend {
+		@include font (700, 36px,45px);
+		border: none;
+		letter-spacing: 0.3px;
+		margin-bottom: 30px;
+
+		@media all and (max-width: $tablets-big) {
+			font-size: 30px;
+			text-align: center;
+		}
+	}
+
+	.input {
+		padding: 0 10px;
+		border: solid 1px $border-stroke;
+		@include box-shadow(0,0,5px,4px,rgba(0, 229, 255, 0));
+		margin: 10px 0 24px;
+
+		&:valid {
+			background: rgba(56, 128, 154, 0.225);
+		}
+		&:focus {
+			border: 1px solid $focus-border;
+			@include box-shadow(0,0,5px,4px,$focus-shadow);
+		}
+	}
+
+	&__rf-wrapper {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 26px;
+
+		input {
+			height: 20px;
+			width: 20px;
+			margin-right: 18px;
+
+			@media all and (max-width: $tablets-big) {
+				margin-right: 8px;
+			}
+		}
+		
+		span, a {
+			font: 400 16px/24px $lora;
+		}
+		span {
+			color: $back;
+		}
+		label {
+			display: flex;
+			align-items: center;
+		}
+	}
+
+	.button {
+		background: $links-btn-form;
+		font: 700 16px/20px $lora;
+		color: $button-font;
+		border: none;
+		cursor: pointer;
+		@include transition(background 0.4s);
+		&:hover {
+			background: $main-btn-hover;
+		}
+	}
+
+	.button_black {
+		background: $google-bnt;
+		margin-top: 20px;
+		&:hover {
+			background: $google-btn-hover;
+		}
+	}
+
+	.links-wrapper {
+		margin-top: 30px;
+		color: $back;
+
+		span {
+			margin-right: 8px;
+		}
+	}
+}

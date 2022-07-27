@@ -1,0 +1,9 @@
+.home-header--bg {
+	@include image('../img/footer_bg_image.jpg');
+	min-height: 600px;
+	h1 {
+		@include font (700, 36px, 46px);
+		padding-top: 278px;
+		text-align: center;
+	}
+}

@@ -1,0 +1,54 @@
+.home-header {
+	position: relative;
+}
+
+.content-wr {
+	padding-top: 254px;
+	@include box-sizing(border-box); 
+	position: absolute;
+	left: 0;
+	right: 0;
+	z-index: 1;
+
+	&__container {
+		max-width: 1440px;
+		padding-left: 70px;
+		margin: 0 auto;
+		@media all and (max-width: $phones-big) {
+			padding-left: 0px;
+		}
+		h1 {
+			max-width: 530px;
+			letter-spacing: 1.1px;
+			@include font(700,35px,46px);
+
+			@media all and (max-width: $phones-big) {
+				font-size: 28px;
+				text-align: center;
+			}
+		}
+	}
+	@media all and (max-width: $phones-big) {
+		padding-top: 180px;
+	}
+}
+
+.slider {
+	.img {
+		height: 600px
+	}
+	.one {
+		@include image('../img/header_bg_image.jpg');
+		@include image-2x('../img/header_bg_image2x.jpg');
+	}
+	.two { 
+		@include image('../img/sea-top1440x900.jpg');
+		@include image-2x('../img/sea-top2560x1440.jpg');
+	}
+	.three {
+		@include image('../img/sea-beach-top1440x900.jpg');
+		@include image-2x('../img/sea-beach-top2560x1440.jpg');
+	}
+
+}
+

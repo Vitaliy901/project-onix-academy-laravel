@@ -1,0 +1,219 @@
+.article-page-mn{
+	position: relative;
+	z-index: 1;
+	&__article {
+		max-width: 860px;
+		margin: 0 auto;
+		padding: 0 15px;
+		@include box-sizing(content-box);
+		.article-hd {
+			text-align: center;
+			margin-bottom: 345px;
+
+			@media screen and (max-width: $tablets) {
+				margin-bottom: 300px;
+			}
+			@media screen and (max-width: $phones) {
+				margin-bottom: 250px;
+			}
+
+			h1 {
+				@include font(700,35px,46px);
+				letter-spacing: 1.1px;
+				max-width: 530px;
+				margin: 0 auto;
+				padding-top: 212px;
+	
+				@media all and (max-width: $phones) {
+					@include font(700,28px,36px);
+				}
+			}
+			p {
+				@include font(400,12px,20px);
+				max-width: 420px;
+				color: $border-stroke;
+				padding-top: 13px;
+				margin: 0 auto;
+			}
+			
+			img {
+				position: absolute;
+				top: 0;
+				left: 0;
+				z-index: -1;
+				height: 600px;
+				width: 100%;
+				object-fit: cover;
+			}
+		}
+
+		>p {
+			padding-bottom: 25px;
+		}
+		blockquote {
+			@include font(700,36px,46px);
+			color: $links-btn-form;
+			letter-spacing: 0.6px;
+			margin-bottom: 25px;
+		}
+
+		time {
+			@include font(400,12px,25px);
+			display: inline-block;
+			margin-top: 29px;
+		}
+		hr {
+			border: none;
+			background: $hr-line;
+			height: 1px;
+			width: 100%;
+			margin: 40px 0;
+		}
+
+		.author-ft {
+			display: flex;
+			padding-top: 10px;
+			gap: 18px;
+			img {
+				width: 50px;
+				height: 50px;
+			}
+
+			.author-name {
+				display: flex;
+				flex-direction: column;
+				@media screen and (max-width: $phones) {
+					padding-left: 0;
+				}
+
+				@include font (400, 12px, 20px);
+				span:first-child {
+					font-weight: 700;
+					letter-spacing: 0.2px;
+				}
+			}
+
+			address {
+				width: 100%;
+				@include flex-sbc;
+				gap: 10px;
+				@media screen and (max-width: $phones) {
+					flex-wrap: wrap;
+					justify-content: end;
+				}
+				ul {
+					@extend .home-footer-social;
+					display: flex;
+					gap: 14px;
+					a {
+						color: $article-table;
+					}
+				}
+			}
+		}
+	}
+
+	&__footer {
+		position: relative;
+		z-index: -2;
+		background: $bg-related;
+		margin-top: 100px;
+		.footer__wr {
+			max-width: 1300px;
+			margin: 0 auto;
+			@include box-sizing(content-box);
+			padding: 100px 10px;
+			@media screen and (max-width: $phones) {
+				padding: 100px 10px 30px;
+			}
+			h2 {
+				@include font(700, 18px,25px);
+				margin-bottom: 50px;
+				@media screen and (max-width: $desktops2) {
+					text-align: center;
+				}
+			}
+	
+			.related-wr {
+				.slick-track {
+					display: flex;
+					justify-content: space-between;
+					@media screen and (max-width: 1199px) {
+							display: block;
+					}
+				}
+				.slick-slide:not(:last-child){
+					padding-right: 8px;
+					@media screen and (max-width: 1199px) {
+							margin: 0 5px;
+							padding-right: 0px;
+					}
+					@media screen and (max-width: 768px) {
+							margin: 0;
+					}
+				}
+
+				article {
+					position: relative;
+					padding: 150px 0 62px 40px;
+					color: $border-stroke;
+					@media screen and (max-width: $phones) {
+						padding: 100px 0 35px 20px;
+					}
+					img {
+						position: absolute;
+						top: 0;
+						left: 0;
+						height: 100%;
+						width: 100%;
+						object-fit: cover;
+						z-index: -1;
+						@include border-radius(5px);
+					}
+					
+					h3 {
+						max-width: 345px;
+						margin: 14px 0;
+					}
+					a {
+						@include font(700,18px,25px);
+						color: $button-font;
+						letter-spacing: 0.3px;
+						&:hover {
+							text-decoration: underline;
+						}
+					}
+					p {
+						letter-spacing: 0.2px;
+					}
+				}
+			}
+		}
+	}
+}
+.home-footer {
+	.cc-wrapper--flex{
+		@include flex-sbc();
+		@media screen and (max-width: $phones-big) {
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+		span {
+			max-width: none;
+			margin: 0px;
+		}
+		span:last-child {
+			@media screen and (max-width: $phones-big) {
+				order: -1;
+			}
+		}
+		a {
+			color: $border-stroke;
+			padding-right: 25px;
+			&:hover {
+				color: $home-logo;
+				text-decoration: underline;
+			}
+		}
+	}
+}

@@ -1,0 +1,284 @@
+@import '../sections/article-list/header.scss';
+
+.article-list {
+	margin-top: 81px;
+
+	&__inner-wrapper {
+		margin: 0px auto;
+		max-width: 1440px;
+		padding: 0px 40px;
+
+		@media all and (max-width: $tablets-big) {
+			padding: 0 20px;
+		}
+	}
+
+	.add-form-modal {
+		@include position-fx();
+		z-index: -2;
+		overflow-x: hidden;
+		overflow-y: auto;
+		@extend .form;
+		opacity: 0;
+		display: flex;
+		align-items: center;
+		@include transition(opacity 0.2s ease-in-out);
+		
+		@media screen and (max-height: $tablets){
+			display: block;
+		}
+
+		&:target {
+			opacity: 1;
+			z-index: 2;
+			background: $bg-modal;
+		}
+
+		form {
+			position: relative;
+			flex: 0 1 680px;
+			margin: 0 auto;
+			background: $button-font;
+			@include border-radius(5px);
+			padding: 10px;
+			@media screen and (max-height: $tablets){
+				max-width: 680px;
+			}
+			.close {
+				position: absolute;
+				top: 20px;
+				right: 20px;
+				font-size: 25px;
+				&:hover {
+					text-decoration: none;
+					@include transform(scale(1.4));
+				}
+			}
+			textarea {
+				@include font (400, 14px,28px);
+				margin: 10px 0 24px;
+				padding: 10px;
+				border-radius: 5px;
+				display: block;
+				height: 350px;
+				width: 100%;
+				resize: none;
+				border: solid 1px $border-stroke;
+				@include box-shadow(0,0,5px,4px,rgba(0, 229, 255, 0));
+				transition: 0.4s;
+				&:valid {
+					background: $bg-textarea;
+				}
+				&:focus {
+					border: 1px solid $focus-border;
+					@include box-shadow(0,0,5px,4px,$focus-shadow);
+				}
+			}
+			.buttons-wr {
+				@include flex-sbc;
+				gap: 10px;
+			}
+			.button-file {
+				display: inline-block;
+				flex: 0 1 120px;
+				padding: 14px 0;
+				font: 700 16px/20px "Lora", serif;
+				color: $button-font;
+				text-align: center;
+				border-radius: 5px;
+				background:$button-file;
+				transition: 0.4s;
+				&:hover {
+					cursor: pointer;
+					background:$button-file-hvr;
+				}
+			}
+			.file {
+				position: absolute;
+				z-index: -1;
+				opacity: 0;
+			}
+			.button {
+				flex: 0 1 200px;
+			}
+		}
+	}
+
+	h2 {
+		color: $common-fc;
+		@include font (700, 24px,28px);
+		letter-spacing: 0.4px;
+		margin-bottom: 24px;
+
+		@media all and (max-width: $phones-big) {
+			font-size: 20px;
+			margin-bottom: 20px;
+		}
+	}
+}
+
+.home-link-wrapper {
+	padding: 19px 0 10px;
+	
+	a {
+		color: $links-btn-form;
+		font-size: 14px;
+		line-height: 16.40px;
+		@include transition(0.4s);
+
+		&:hover {
+			color: $main-btn-hover;
+		}
+	}
+}
+
+.search-add {
+	@include flex-sbc;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-bottom: 26px;
+
+	form {
+		position: relative;
+		flex: 0 1 307px;
+
+		.search {
+			height: 40px;
+			border: 1px solid $border-stroke;
+			font-size: 14px;
+			line-height: 20px;
+			padding-left: 44px;
+
+			&:focus {
+				border: 1px solid $focus-border;
+			}
+
+			&:focus + .icon-search-glass{
+				color: $links-btn-form;
+			}
+		}
+
+		.icon-search-glass {
+			color: $article-gray;
+			@include transition(0.4s);
+			position: absolute;
+			top: 8px;
+			left: 14px;
+			font-size: 22px;
+		}
+
+		@media all and (max-width: $phones-big) {
+				width: 100%;
+				flex: 1 1 100%;
+			}
+	}
+
+	.button-add {
+		display: block;
+		padding: 10px 15px;
+		background: $links-btn-form;
+		@include border-radius(5px);
+		font-size: 16px;
+		line-height: 20px;
+		color: $button-font;
+		@include transition(0.4s);
+
+		&:hover {
+			background: $main-btn-hover;
+		}
+		@media all and (max-width: $phones-big) {
+			align-self: flex-end;
+		}
+	}
+	@media all and (max-width: $phones-big) {
+		flex-direction: column;
+	}
+}
+
+.table {
+	width: 100%;
+
+	tr {
+		border-bottom: 1px solid $border-stroke;
+	}
+
+	th {
+		@include font (400,12px,15px);
+		color: $article-gray;
+		text-transform: uppercase;
+		padding-bottom: 7px;
+		vertical-align: middle;
+	}
+	input {
+		height: 20px;
+		width: 20px;
+		vertical-align: middle;
+	}
+	.table-image {
+		width: 5%;
+		text-align: start;
+		@media all and (max-width: $tablets-big) {
+			width: 7%;
+		}
+	}
+	.table-title {
+		width: 25%;
+		text-align: start;
+	}
+	.table-author {
+		width: 28%;
+		@media all and (max-width: $tablets-big) {
+			width: 24%;
+		}
+	}
+	.table-last-modified {
+		width: 8.2%;
+	}
+	.table-status {
+		width: 20.8%;
+	}
+	.table-action {
+		width: 8.5%;
+	}
+	img {
+		width: 48px;
+		height: 40px;
+	}
+	td {
+		font-size: 16px;
+		line-height: 24px;
+		color: $article-table;
+		vertical-align: middle;
+		padding: 20px 0;
+	}
+	td:nth-child(3){
+		font-weight: 500;
+	}
+	td:not(.table td:nth-child(2), .table td:nth-child(3)) {
+	text-align: center;
+	}
+	.icon-pencil, .icon-trash {
+		color: $back;
+		font-size: 24px;
+		vertical-align: middle;
+		@include transition(color 0.4s);
+	}
+	.icon-pencil {
+		margin-right: 15px;
+	}
+	.icon-pencil:hover {
+		color: $icon-pencil;
+	}
+	.icon-trash:hover {
+		color: $icon-trash;
+	}
+	@media all and (max-width: $tablets-big) {
+		width: $tablets-big;
+	}
+}
+.table-wrapper {
+	@media all and (max-width: $tablets-big) {
+		overflow-y: hidden;
+		overflow-x: scroll;
+	}
+}

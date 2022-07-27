@@ -1,0 +1,40 @@
+.login__right, .register__right {
+	padding: 0 20px;
+	@include box-sizing(border-box); 
+
+	.form-wrapper {
+		max-width: 440px;
+		margin: 0 auto;
+		
+		.logo-wrapper--padding-top {
+			padding: 96px 0 110px;
+		}
+		@media all and (max-width: $tablets-big) {
+			max-width: 525px;
+		}
+
+	}
+}
+
+.logo-wrapper {
+	padding: 124px 0 110px;
+
+	a {
+		position: relative;
+		font: 700 40px/44px $spartan;
+		color: $common-fc;
+		letter-spacing: 5px;
+
+		&:hover::before {
+			width: 95%;
+		}
+		
+		&::before {
+			@extend %underline;
+		}
+	}
+
+	@media all and (max-width: $tablets-big) {
+		text-align: center;
+	}
+}

@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  nginx:
+    image: nginx:1.21.4-alpine
+    volumes:
+      - ./:/var/www
+      - ./_docker/nginx/conf.d/:/etc/nginx/conf.d
+      - ./storage/logs/nginx/:/var/log/nginx
+    ports:
+      - 80:80
+    depends_on:
+      - app
+    container_name: nginx
+
+  app:
+    build:
+      context: ./
+      dockerfile: _docker/app/Dockerfile
+    volumes:
+      - ./:/var/www/
+    container_name: php8_app
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14.4
+    restart: always
+    user: root
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - 5432:5432
+    container_name: pg-db
+
+volumes:
+  pg-data:

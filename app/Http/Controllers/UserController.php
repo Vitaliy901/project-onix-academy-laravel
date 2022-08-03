@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateUserRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-	public function profile () {
+	public function profile (Request $request) {
 
 		return view('profile', [
 			'user' => auth()->user(),
@@ -21,5 +23,9 @@ class UserController extends Controller
 		session()->regenerateToken();
 
 		return redirect('/');
+	}
+
+	public function update (UpdateUserRequest $request) {
+		return $request->validated();
 	}
 }

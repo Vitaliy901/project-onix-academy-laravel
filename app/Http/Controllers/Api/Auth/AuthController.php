@@ -38,7 +38,7 @@ class AuthController extends Controller
 		return response()->json([
 			'satatus' => true,
 			'message' => 'User created successfully!',
-			'api_token' => $user->createToken('API Token')->plainTextToken,
+			'api_token' => $user->createToken('API Token', ['publish'])->plainTextToken,
 		], 401);
         
     }
@@ -66,7 +66,7 @@ class AuthController extends Controller
 			return response()->json([
 				'satatus' => true,
 				'message' => 'User logged in successfully!',
-				'api_token' => $user->createToken('API Token')->plainTextToken,
+				'api_token' => $user->createToken('API Token', ['publish'])->plainTextToken,
 			]);
 		};
 	

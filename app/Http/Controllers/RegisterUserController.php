@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreGuestRequest;
+use App\Http\Requests\StoreRegisterUserRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +15,7 @@ class RegisterUserController extends Controller
         return view('auth.register');
     }
 
-    public function store(StoreGuestRequest $request)
+    public function store(StoreRegisterUserRequest $request)
     {
         $user = User::create([
             'email' => $request->validated('email'),

@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\Api\StorePostRequest;
+use App\Http\Requests\Api\UpdatePostRequest;
+use App\Models\Image;
 use App\Models\Post;
-
 use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
@@ -29,9 +30,30 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {	
 
-		$post = Post::create($request->safe()->merge(['user_id'=> Auth::id()])->all());
+		$post = Post::create($request->safe()->merge(['user_id'=> Auth::id()])->except('cover'));
 
-		return redirect()->route('posts.show', $post->id);
+		if ($request->hasFile('cover') && $request->file('cover')->isValid()) {
+			
+			$coverPath = $request->cover->store('public/covers');
+			
+			$cover = Image::create([
+				'cover' => $coverPath,
+				'post_id' => $post->id,
+			]);
+			return response()->json([
+				'success' => true,
+				'message' => 'Post created successfully.',
+				'data' => $post,
+				'image' => $cover,
+				
+			]);
+		}
+
+		return response()->json([
+			'success' => true,
+			'message' => 'Post created successfully.',
+			'data' => $post,
+		]);
     }
 
     /**
@@ -52,11 +74,16 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(StorePostRequest $request, Post $post)
+    public function update(UpdatePostRequest $request, Post $post)
     {
-		$post->update($request->only('title', 'body'));
 
-		return redirect()->route('posts.index');
+		$post->update($request->safe()->except('cover'));
+		
+		return response()->json([
+			'success' => true,
+			'message' => 'Post updated successfully.',
+			'data' => $post->refresh(),
+		]);
     }
 
     /**
@@ -69,6 +96,10 @@ class PostController extends Controller
     {
 		$post->delete();
 		
-		return redirect()->route('posts.index');
+		return response()->json([
+			'success' => true,
+			'message' => 'Post deleted successfully.',
+			'data' => $post,
+		]);
     }
 }

@@ -6,15 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Post extends Model
+class Image extends Model
 {
-    use HasFactory, SoftDeletes;
+	use HasFactory, SoftDeletes;
 
 	protected $fillable = [
-        'title',
-		'keywords',
-        'text',
-		'user_id',
+        'cover',
+		'post_id',
     ];
-	
+
 }

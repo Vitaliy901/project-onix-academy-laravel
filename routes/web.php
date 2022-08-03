@@ -16,8 +16,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth')->group(function () {
 	Route::get('/profile', [UserController::class, 'profile'])
 	->name('user.profile');
-	Route::get('/logout', [UserController::class, 'logout'])
+	Route::get('/profile/logout', [UserController::class, 'logout'])
 	->name('user.loguot');
+	Route::post('/profile/update', [UserController::class, 'update'])
+	->name('user.update');
+	
 });
 
 Route::get('/', function () {

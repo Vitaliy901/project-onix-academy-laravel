@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRegisterUserRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-class RegisterUserController extends Controller
+class RegisterController extends Controller
 {
-
-    public function create()
+	public function show()
     {
         return view('auth.register');
     }

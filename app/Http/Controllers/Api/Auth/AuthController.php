@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -14,11 +15,11 @@ use Illuminate\Validation\Rules\Password;
 class AuthController extends Controller
 {
 	public function create(Request $request)
-    {
+	{
 		$validator = Validator::make($request->all(), [
 			'name' => ['required', 'string', 'max:255'],
 			'email' => ['required', 'string', 'email:rfc,dns', 'max:255', 'unique:users'],
-            'password' => ['required', Password::min(8)->letters()->mixedCase()->numbers()],
+			'password' => ['required', Password::min(8)->letters()->mixedCase()->numbers()],
 		]);
 
 		if ($validator->fails()) {
@@ -28,23 +29,24 @@ class AuthController extends Controller
 				'errors' => $validator->errors(),
 			], 401);
 		}
-		
-        $user = User::create([
-			'name' => $validator->validated()['name'],
-            'email' => $validator->validated()['email'],
-            'password' => Hash::make($validator->validated()['password']),
-        ]);
-		
+
+		$data = $validator->validated();
+
+		$user = User::create([
+			'name' => $data['name'],
+			'email' => $data['email'],
+			'password' => Hash::make($data['password']),
+		]);
+
 		return response()->json([
 			'satatus' => true,
 			'message' => 'User created successfully!',
 			'api_token' => $user->createToken('API Token', ['publish'])->plainTextToken,
 		], 401);
-        
-    }
+	}
 
 	public function login(Request $request)
-    {
+	{
 		$validator = Validator::make($request->all(), [
 			'email' => 'required|email',
 			'password' => 'required',
@@ -60,7 +62,7 @@ class AuthController extends Controller
 
 		$credentials = $validator->validated();
 
-		$user = User::where('email',$request->email)->first();
+		$user = User::where('email', $request->email)->first();
 
 		if (Auth::attempt($credentials)) {
 			return response()->json([
@@ -69,10 +71,10 @@ class AuthController extends Controller
 				'api_token' => $user->createToken('API Token', ['publish'])->plainTextToken,
 			]);
 		};
-	
+
 		return response()->json([
 			'satatus' => true,
 			'message' => 'Email or password do not match our records.',
 		], 401);
-    }
+	}
 }

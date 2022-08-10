@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\StorePostRequest;
-use App\Http\Requests\Api\UpdatePostRequest;
-use App\Models\Image;
+
+use App\Http\Requests\Web\StorePostRequest;
+use App\Http\Requests\Web\UpdatePostRequest;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,7 +18,23 @@ class PostController extends Controller
 	 */
 	public function index()
 	{
-		return Post::take(10)->get();
+		return view('posts.posts', [
+			'posts' => Post::latest()->paginate(4),
+		]);
+	}
+
+	/**
+	 * Show the form for creating a new resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function create()
+	{
+		$langFlag = 'create';
+
+		return view('posts.form-post', [
+			'flag' => $langFlag,
+		]);
 	}
 
 	/**
@@ -31,32 +47,11 @@ class PostController extends Controller
 	{
 		$data = $request->safe()
 			->merge(['user_id' => Auth::id()])
-			->except('cover');
+			->all();
 
 		$post = Post::create($data);
 
-		if ($request->hasFile('cover') && $request->file('cover')->isValid()) {
-
-			$coverPath = $request->cover->store('public/covers');
-
-			$cover = Image::create([
-				'cover' => $coverPath,
-				'post_id' => $post->id,
-			]);
-			return response()->json([
-				'success' => true,
-				'message' => 'Post created successfully.',
-				'data' => $post,
-				'image' => $cover,
-
-			]);
-		}
-
-		return response()->json([
-			'success' => true,
-			'message' => 'Post created successfully.',
-			'data' => $post,
-		]);
+		return redirect()->route('posts.show', $post);
 	}
 
 	/**
@@ -67,7 +62,25 @@ class PostController extends Controller
 	 */
 	public function show(Post $post)
 	{
-		return $post;
+		return view('posts.single-post', [
+			'post' => $post,
+		]);
+	}
+
+	/**
+	 * Show the form for editing the specified resource.
+	 *
+	 * @param  \App\Models\Post  $post
+	 * @return \Illuminate\Http\Response
+	 */
+	public function edit(Post $post)
+	{
+		$langFlag = 'edit';
+
+		return view('posts.form-post', [
+			'flag' => $langFlag,
+			'post' => $post,
+		]);
 	}
 
 	/**
@@ -79,14 +92,9 @@ class PostController extends Controller
 	 */
 	public function update(UpdatePostRequest $request, Post $post)
 	{
+		$post->update($request->validated());
 
-		$post->update($request->safe()->except('cover'));
-
-		return response()->json([
-			'success' => true,
-			'message' => 'Post updated successfully.',
-			'data' => $post->refresh(),
-		]);
+		return redirect()->route('posts.show', $post);
 	}
 
 	/**
@@ -97,12 +105,6 @@ class PostController extends Controller
 	 */
 	public function destroy(Post $post)
 	{
-		$post->delete();
-
-		return response()->json([
-			'success' => true,
-			'message' => 'Post deleted successfully.',
-			'data' => $post,
-		]);
+		//
 	}
 }

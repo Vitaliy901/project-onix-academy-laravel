@@ -1,6 +1,8 @@
 <?php
 
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Web\LangController;
+use App\Http\Controllers\Web\PostController;
+use App\Http\Controllers\Web\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,16 +15,20 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 Route::middleware('auth')->group(function () {
 	Route::get('/profile', [UserController::class, 'profile'])
-	->name('user.profile');
+		->name('user.profile');
 	Route::get('/profile/logout', [UserController::class, 'logout'])
-	->name('user.loguot');
+		->name('user.loguot');
 	Route::post('/profile/update', [UserController::class, 'update'])
-	->name('user.update');
-	
+		->name('user.update');
 });
 
+Route::resource('/posts', PostController::class);
+
+Route::get('lang/{lang}', LangController::class)->name('lang');
+
 Route::get('/', function () {
-    return view('welcome');
+	return view('welcome');
 })->name('home');

@@ -1,21 +1,24 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-	public function profile (Request $request) {
+	public function profile(Request $request)
+	{
 
 		return view('profile', [
 			'user' => auth()->user(),
 		]);
 	}
 
-	public function logout () {
+	public function logout()
+	{
 		Auth::logout();
 
 		session()->invalidate();
@@ -25,7 +28,8 @@ class UserController extends Controller
 		return redirect('/');
 	}
 
-	public function update (UpdateUserRequest $request) {
+	public function update(UpdateUserRequest $request)
+	{
 		return $request->validated();
 	}
 }

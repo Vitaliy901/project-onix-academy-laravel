@@ -26,7 +26,9 @@
 					<label for="materialSaveFormMessage">{{ __('post.text') }}</label>
 					<textarea type="text" name="text" id="materialSaveFormMessage" class="form-control md-textarea" rows="7">{{ ($flag == 'create') ? old('text') : $post->text;}}</textarea>
 					<input type="submit" class="btn btn-outline-info btn-rounded btn-block z-depth-0 my-4 waves-effect" value="{{ ($flag == 'create') ? __('post.create_post') : __('post.bt_edit_post') ;}}"></a>
+					@if ($flag != 'create')
 					<input type="hidden" name="_method" value="PATCH">
+					@endif
 				</form>
 			</div>
 		</div>

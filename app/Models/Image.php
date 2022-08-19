@@ -11,8 +11,7 @@ class Image extends Model
 	use HasFactory, SoftDeletes;
 
 	protected $fillable = [
-        'cover',
+		'cover',
 		'post_id',
-    ];
-
+	];
 }

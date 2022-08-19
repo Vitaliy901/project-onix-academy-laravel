@@ -6,29 +6,29 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StorePostRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
+	/**
+	 * Determine if the user is authorized to make this request.
+	 *
+	 * @return bool
+	 */
 	public function authorize()
-    {
+	{
 		return $this->user()->tokenCan('publish');
-    }
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, mixed>
-     */
+	}
+	/**
+	 * Get the validation rules that apply to the request.
+	 *
+	 * @return array<string, mixed>
+	 */
 	public function rules()
-    {
-        return [
-            'title' => 'bail|required|string|min:5|max:150',
-            'keywords' => 'sometimes|string',
+	{
+		return [
+			'title' => 'bail|required|string|min:5|max:150',
+			'keywords' => 'sometimes|string',
 			'text' => 'bail|required|string|min:10',
 			'cover' => 'bail|sometimes|file|mimes:jpeg,gif,png',
-        ];
-    }
+		];
+	}
 
 	public function messages()
 	{

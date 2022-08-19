@@ -2,34 +2,42 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Models\Post;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdatePostRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-		return $this->user()->tokenCan('publish');
-    }
+	/**
+	 * Determine if the user is authorized to make this request.
+	 *
+	 * @return bool
+	 */
+	/**
+	 * Determine if the user is authorized to make this request.
+	 *
+	 * @return bool
+	 */
+	public function authorize()
+	{
+		$post = Post::find($this->route('post')->id);
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, mixed>
-     */
-    public function rules()
-    {
-        return [
-            'title' => 'bail|sometimes|string|min:5|max:150',
-            'keywords' => 'sometimes|string',
+		return $post && $this->user()->can('update', $post);
+	}
+
+	/**
+	 * Get the validation rules that apply to the request.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function rules()
+	{
+		return [
+			'title' => 'bail|sometimes|string|min:5|max:150',
+			'keywords' => 'sometimes|string',
 			'text' => 'bail|sometimes|string|min:10',
 			'cover' => 'bail|sometimes|file|mimes:jpeg,gif,png',
-        ];
-    }
+		];
+	}
 
 	public function messages()
 	{

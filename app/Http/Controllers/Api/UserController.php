@@ -24,26 +24,19 @@ class UserController extends Controller
      */
     public function index(IndexUserRequest $request)
     {
-        if ($request->keywords) {
-            return  User::where('email', 'ILIKE', $request->keywords . '%')
-                ->addSelect([
-                    'total_post' => Post::selectRaw('COUNT(id)')
-                        ->whereColumn('user_id', 'users.id')
-                ])->cursorPaginate(2);
-        }
-
-        $users = User::whereBetween('created_at', [
+        $query = User::whereBetween('created_at', [
             $request->startDate,
             $request->endDate,
         ])->addSelect([
-            'total_price' => Post::selectRaw('COUNT(*)')
+            'total_post' => Post::selectRaw('COUNT(id)')
                 ->whereColumn('user_id', 'users.id')
-        ])->cursorPaginate(2);
+        ]);
 
-        return $users->items() ? $users : User::addSelect([
-            'total_price' => Post::selectRaw('COUNT(*)')
-                ->whereColumn('user_id', 'users.id')
-        ])->cursorPaginate(2);
+        $query->when($request->keywords, function ($query, $keywords) {
+            $query->orWhere('email', 'ILIKE', $keywords . '%');
+        });
+
+        return $query->cursorPaginate(2);
     }
 
     /**

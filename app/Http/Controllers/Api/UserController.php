@@ -7,6 +7,7 @@ use App\Http\Requests\Api\IndexUserRequest;
 use App\Http\Requests\Api\StoreUserRequest;
 use App\Http\Requests\Api\UpdateUserRequest;
 use App\Models\Post;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -24,18 +25,19 @@ class UserController extends Controller
      */
     public function index(IndexUserRequest $request)
     {
-        $query = User::whereBetween('created_at', [
-            $request->startDate,
-            $request->endDate,
-        ])->addSelect([
+        $query = User::when($request->keywords, function ($query, $keywords) {
+            $query->where('email', 'ILIKE', $keywords . '%');
+        })->addSelect([
             'total_post' => Post::selectRaw('COUNT(id)')
                 ->whereColumn('user_id', 'users.id')
         ]);
 
-        $query->when($request->keywords, function ($query, $keywords) {
-            $query->orWhere('email', 'ILIKE', $keywords . '%');
-        });
-
+        if ($request->startDate && $request->endDate) {
+            $query->whereBetween('created_at', [
+                $request->startDate,
+                $request->endDate,
+            ]);
+        }
         return $query->cursorPaginate(2);
     }
 

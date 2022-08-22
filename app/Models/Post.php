@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
-	use HasFactory, SoftDeletes;
+	use HasFactory;
 
 	protected $fillable = [
 		'title',
@@ -20,9 +20,5 @@ class Post extends Model
 	protected $casts = [
 		'created_at' => 'datetime:Y.m.d i:m:s',
 		'updated_at' => 'datetime:Y.m.d i:m:s',
-	];
-
-	protected $hidden = [
-		'deleted_at'
 	];
 }

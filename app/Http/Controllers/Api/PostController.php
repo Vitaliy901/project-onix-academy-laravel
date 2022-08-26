@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\StorePostRequest;
 use App\Http\Requests\Api\UpdatePostRequest;
-use App\Models\Image;
+use App\Http\Resources\PostCollection;
+use App\Http\Resources\PostResource;
 use App\Models\Post;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,12 +22,14 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
-        return Post::when($request->keywords, function ($query, $keywords) {
+        $posts = Post::when($request->keywords, function ($query, $keywords) {
             $query->where(function ($builder) use ($keywords) {
                 $builder->where('title', 'ILIKE', '%' . $keywords . '%')
                     ->orWhere('text', 'ILIKE', '%' . $keywords . '%');
             });
-        })->cursorPaginate(2);
+        })->with('user');
+
+        return new PostCollection($posts->paginate(2));
     }
 
     /**
@@ -38,32 +42,51 @@ class PostController extends Controller
     {
         $data = $request->safe()
             ->merge(['user_id' => Auth::id()])
-            ->except('cover');
+            ->except('cover', 'tags');
 
         $post = Post::create($data);
 
-        if ($request->hasFile('cover') && $request->file('cover')->isValid()) {
+        if ($request->filled('tags')) {
 
-            $coverPath = $request->cover->store('public/covers');
+            $dataIn = Tag::whereIn('name', $request->tags)->pluck('name', 'id');
 
-            $cover = Image::create([
-                'cover' => $coverPath,
-                'post_id' => $post->id,
-            ]);
-            return response()->json([
-                'success' => true,
-                'message' => 'Post created successfully.',
-                'data' => $post,
-                'image' => $cover,
+            $newTags = $request->collect('tags')
+                ->diff($dataIn)
+                ->map(function ($value) {
+                    return ['name' => $value];
+                });
 
-            ]);
+            if (!$newTags->isEmpty()) {
+
+                $createdTags = $post->tags()->createMany($newTags);
+
+                $arrTags = collect($createdTags)->pluck('name', 'id');
+
+                $tagsID = $dataIn->union($arrTags)->keys();
+
+                $post->tags()->sync($tagsID);
+            } else {
+                $post->tags()->attach($dataIn->keys());
+            }
+
+            $post->load('tags');
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Post created successfully.',
-            'data' => $post,
-        ]);
+        if ($request->hasFile('cover')) {
+
+            $covers = [];
+
+            foreach ($request->file('cover') as $file) {
+
+                if ($file->isValid()) {
+                    $covers[] = ['cover' => $file->store('public/covers')];
+                }
+            }
+
+            $post->images()->createMany($covers);
+        }
+
+        return new PostResource($post);
     }
 
     /**
@@ -74,7 +97,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return $post;
+        return new PostResource($post);
     }
 
     /**
@@ -86,13 +109,36 @@ class PostController extends Controller
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
-        $post->update($request->safe()->except('cover'));
+        $post->update($request->safe()->except('cover', 'tags'));
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Post updated successfully.',
-            'data' => $post->refresh(),
-        ]);
+        if ($request->filled('tags')) {
+
+            $dataIn = Tag::whereIn('name', $request->tags)->pluck('name', 'id');
+
+            $newTags = $request->collect('tags')
+                ->diff($dataIn)
+                ->map(function ($value) {
+                    return ['name' => $value];
+                });
+
+            if (!$newTags->isEmpty()) {
+
+                $post->tags()->createMany($newTags);
+
+                $tagsID = $post->tags()->allRelatedIds();
+            } else {
+
+                $tagsID = $post
+                    ->tags()
+                    ->pluck('name', 'id')
+                    ->union($dataIn)
+                    ->keys();
+            }
+
+            $post->tags()->sync($tagsID);
+        }
+
+        return new PostResource($post);
     }
 
     /**

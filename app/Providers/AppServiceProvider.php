@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\View\Components\Guest;
 use App\View\Components\Post;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -31,5 +32,9 @@ class AppServiceProvider extends ServiceProvider
 		Blade::component(Post::class, 'post-layout');
 
 		Paginator::defaultView('components.bootstrap-5');
+
+		Relation::morphMap([
+			'post' => 'App\Models\Post',
+		]);
 	}
 }

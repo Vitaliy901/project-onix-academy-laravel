@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\IndexUserRequest;
 use App\Http\Requests\Api\StoreUserRequest;
 use App\Http\Requests\Api\UpdateUserRequest;
-use App\Models\Post;
-use App\Models\Role;
+use App\Http\Resources\UserCollection;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -27,18 +27,24 @@ class UserController extends Controller
     {
         $query = User::when($request->keywords, function ($query, $keywords) {
             $query->where('email', 'ILIKE', $keywords . '%');
-        })->addSelect([
-            'total_post' => Post::selectRaw('COUNT(id)')
-                ->whereColumn('user_id', 'users.id')
-        ]);
+        })->withCount('posts');
 
-        if ($request->startDate && $request->endDate) {
+        if ($request->has('startDate') && $request->has('endDate')) {
             $query->whereBetween('created_at', [
                 $request->startDate,
                 $request->endDate,
             ]);
         }
-        return $query->cursorPaginate(2);
+
+        if ($request->authors === 'true') {
+            $query->has('posts');
+        }
+
+        if ($request->sortBy === 'top') {
+            $query->orderByDesc('posts_count');
+        }
+
+        return new UserCollection($query->paginate(2));
     }
 
     /**
@@ -71,7 +77,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return $user;
+        return new UserResource($user);
     }
 
     /**
@@ -85,7 +91,7 @@ class UserController extends Controller
     {
         $user->update($request->validated());
 
-        return $user;
+        return new UserResource($user);
     }
 
     /**

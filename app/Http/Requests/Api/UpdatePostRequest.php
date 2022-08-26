@@ -36,6 +36,7 @@ class UpdatePostRequest extends FormRequest
 			'keywords' => 'sometimes|string',
 			'text' => 'bail|sometimes|string|min:10',
 			'cover' => 'bail|sometimes|file|mimes:jpeg,gif,png',
+			'tags' => ['sometimes', 'array']
 		];
 	}
 

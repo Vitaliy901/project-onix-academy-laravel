@@ -13,9 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('posts', function (Blueprint $table) {
-			$table->string('keywords', 255)->nullable();
-			$table->renameColumn('body', 'text');
+        Schema::create('tags', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique();
+            $table->timestamps();
         });
     }
 
@@ -26,9 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->dropColumn('keywords');
-			$table->renameColumn('text', 'body');
-        });
+        Schema::dropIfExists('tags');
     }
 };

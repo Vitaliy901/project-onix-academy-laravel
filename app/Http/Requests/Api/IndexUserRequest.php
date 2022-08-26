@@ -16,6 +16,8 @@ class IndexUserRequest extends FormRequest
         return [
             'startDate' => ['sometimes', 'nullable', 'date'],
             'endDate' => ['sometimes', 'nullable', 'date'],
+            'sortBy' => ['sometimes', 'in:top'],
+            'authors' => ['sometimes', 'in:true']
         ];
     }
 }

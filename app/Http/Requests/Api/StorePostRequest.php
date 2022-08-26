@@ -26,7 +26,8 @@ class StorePostRequest extends FormRequest
 			'title' => 'bail|required|string|min:5|max:150',
 			'keywords' => 'sometimes|string',
 			'text' => 'bail|required|string|min:10',
-			'cover' => 'bail|sometimes|file|mimes:jpeg,gif,png',
+			'cover.*' => 'bail|sometimes|file|mimes:jpeg,gif,png',
+			'tags' => ['sometimes', 'array']
 		];
 	}
 

@@ -22,12 +22,10 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
-        $posts = Post::when($request->keywords, function ($query, $keywords) {
-            $query->where(function ($builder) use ($keywords) {
-                $builder->where('title', 'ILIKE', '%' . $keywords . '%')
-                    ->orWhere('text', 'ILIKE', '%' . $keywords . '%');
-            });
-        })->with('user');
+        $posts = Post::with('user', 'tags', 'images')
+            ->text($request->text)
+            ->title($request->title)
+            ->tags($request->tags);
 
         return new PostCollection($posts->paginate(2));
     }

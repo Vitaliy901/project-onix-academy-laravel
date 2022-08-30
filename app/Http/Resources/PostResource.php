@@ -22,9 +22,15 @@ class PostResource extends JsonResource
             'keywords' => $this->whenNotNull($this->keywords),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'images' => $this->when(!$this->images->isEmpty(), ImageResource::collection($this->images)),
+            'images' => $this->when(
+                !$this->images->isEmpty() && $this->whenLoaded('images'),
+                ImageResource::collection($this->images)
+            ),
             'user' => new UserResource($this->whenLoaded('user')),
-            'tags' => $this->when(!$this->tags->isEmpty(), TagResource::collection($this->tags)),
+            'tags' => $this->when(
+                !$this->tags->isEmpty() && $this->whenLoaded('tags'),
+                TagResource::collection($this->tags)
+            ),
         ];
     }
 }

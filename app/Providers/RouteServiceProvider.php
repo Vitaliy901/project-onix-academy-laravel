@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Post;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -26,6 +27,10 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Route::model('my', Post::class);
+
+        Route::model('search', Post::class);
+
         $this->configureRateLimiting();
 
         $this->routes(function () {
@@ -35,9 +40,9 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::middleware('web')
                 ->group(function () {
-					require_once base_path('routes/web.php');
-					require_once base_path('routes/auth.php');
-				});
+                    require_once base_path('routes/web.php');
+                    require_once base_path('routes/auth.php');
+                });
         });
     }
 

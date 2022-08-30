@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Traits\RegisterGlobalScope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-	use HasFactory;
+	use HasFactory, RegisterGlobalScope;
 
 	protected $fillable = [
 		'title',
@@ -33,5 +35,26 @@ class Post extends Model
 	public function images()
 	{
 		return $this->morphMany(Image::class, 'imageable');
+	}
+
+	public function scopeTitle(Builder $builder, $title)
+	{
+		return $builder->when($title, function ($query, $keywords) {
+			$query->where('title', 'ILIKE', '%' . $keywords . '%');
+		});
+	}
+
+	public function scopeText(Builder $builder, $text)
+	{
+		return $builder->when($text, function ($query, $keywords) {
+			$query->where('text', 'ILIKE', '%' . $keywords . '%');
+		});
+	}
+
+	public function scopeTags(Builder $builder, $tags)
+	{
+		return $builder->when($tags, function ($query) use ($tags) {
+			$query->whereRelation('tags', 'name', 'ILIKE', '%' . $tags . '%');
+		});
 	}
 }

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -45,5 +47,37 @@ class User extends Authenticatable
 	public function posts()
 	{
 		return $this->hasMany(Post::class, 'user_id', 'id');
+	}
+
+	public function scopeEmail(Builder $builder, $email)
+	{
+		return $builder->when($email, function ($query, $keywords) {
+			$query->where('email', 'ILIKE', $keywords . '%');
+		});
+	}
+
+	public function scopeInterval(Builder $builder, $startDate, $endDate)
+	{
+		if ($startDate && $endDate) {
+
+			$builder->whereBetween('created_at', [
+				$startDate,
+				$endDate,
+			]);
+		}
+	}
+
+	public function scopeAuthors(Builder $builder, $authors)
+	{
+		if ($authors === 'true') {
+			$builder->has('posts');
+		}
+	}
+
+	public function scopeSortBy(Builder $builder, $sortBy)
+	{
+		if ($sortBy === 'top') {
+			$builder->orderByDesc('posts_count');
+		}
 	}
 }

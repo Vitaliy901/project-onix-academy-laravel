@@ -25,24 +25,11 @@ class UserController extends Controller
      */
     public function index(IndexUserRequest $request)
     {
-        $query = User::when($request->keywords, function ($query, $keywords) {
-            $query->where('email', 'ILIKE', $keywords . '%');
-        })->withCount('posts');
-
-        if ($request->has('startDate') && $request->has('endDate')) {
-            $query->whereBetween('created_at', [
-                $request->startDate,
-                $request->endDate,
-            ]);
-        }
-
-        if ($request->authors === 'true') {
-            $query->has('posts');
-        }
-
-        if ($request->sortBy === 'top') {
-            $query->orderByDesc('posts_count');
-        }
+        $query = User::email($request->keywords)
+            ->interval($request->startDate, $request->endDate)
+            ->authors($request->authors)
+            ->sortBy($request->sortBy)
+            ->withCount('posts');
 
         return new UserCollection($query->paginate(2));
     }

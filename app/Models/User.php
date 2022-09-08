@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Events\UserRegistered;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -21,6 +22,8 @@ class User extends Authenticatable
 	 */
 	protected $fillable = [
 		'name',
+		'first_name',
+		'last_name',
 		'email',
 		'password',
 	];
@@ -79,5 +82,18 @@ class User extends Authenticatable
 		if ($sortBy === 'top') {
 			$builder->orderByDesc('posts_count');
 		}
+	}
+
+	protected static function booted()
+	{
+		static::saving(function ($user) {
+			if ($user->first_name && $user->last_name) {
+				$user->full_name = $user->first_name . ' ' . $user->last_name;
+			}
+		});
+
+		static::created(function ($user) {
+			UserRegistered::dispatch($user);
+		});
 	}
 }

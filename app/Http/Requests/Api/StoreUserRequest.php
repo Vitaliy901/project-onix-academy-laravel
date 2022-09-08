@@ -17,6 +17,8 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'name' => ['bail', 'required', 'string', 'max:255'],
+            'first_name' => ['bail', 'sometimes', 'nullable', 'required_with:last_name', 'string', 'max:255'],
+            'last_name' => ['bail', 'sometimes', 'nullable', 'required_with:first_name', 'string', 'max:255'],
             'email' => ['bail', 'required', 'string', 'email:rfc,dns', 'max:255', 'unique:users'],
             'password' => ['bail', 'required', Password::min(8)->letters()->mixedCase()->numbers()],
         ];

@@ -18,11 +18,14 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'first_name' => $this->whenNotNull($this->first_name),
+            'last_name' => $this->whenNotNull($this->last_name),
+            'full_name' => $this->whenNotNull($this->full_name),
             'email' => $this->email,
             'email_verified_at' => $this->email_verified_at,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'total_post' => $this->whenCounted('posts'),
+            'total_posts' => $this->total_posts,
         ];
     }
 }

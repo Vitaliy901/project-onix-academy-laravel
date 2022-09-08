@@ -28,8 +28,7 @@ class UserController extends Controller
         $query = User::email($request->keywords)
             ->interval($request->startDate, $request->endDate)
             ->authors($request->authors)
-            ->sortBy($request->sortBy)
-            ->withCount('posts');
+            ->sortBy($request->sortBy);
 
         return new UserCollection($query->paginate(2));
     }
@@ -42,16 +41,16 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        $credentials = $request->validated();
+
+        $credentials['password'] = Hash::make($request->password);
+
+        $user = User::create($credentials);
 
         return response()->json([
             'satatus' => true,
             'message' => 'User created successfully!',
-            'data' => $user,
+            'data' => new UserResource($user),
             'api_token' => $user->createToken('API Token', ['publish'])->plainTextToken,
         ], 401);
     }
@@ -76,7 +75,11 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        $user->update($request->validated());
+        $credentials = $request->validated();
+
+        $credentials['password'] = Hash::make($request->password);
+
+        $user->update($credentials);
 
         return new UserResource($user);
     }

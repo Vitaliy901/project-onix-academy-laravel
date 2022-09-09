@@ -14,9 +14,7 @@ class PostObserver
      */
     public function created(Post $post)
     {
-        $post->user()->update([
-            'total_posts' => ++$post->user->total_posts,
-        ]);
+        $post->user()->increment('total_posts');
     }
 
     /**
@@ -38,9 +36,7 @@ class PostObserver
      */
     public function deleted(Post $post)
     {
-        $post->user()->update([
-            'total_posts' => --$post->user->total_posts,
-        ]);
+        $post->user()->decrement('total_posts');
     }
 
     /**

@@ -52,7 +52,7 @@ class UserController extends Controller
             'message' => 'User created successfully!',
             'data' => new UserResource($user),
             'api_token' => $user->createToken('API Token', ['publish'])->plainTextToken,
-        ], 401);
+        ], 200);
     }
 
     /**

@@ -8,7 +8,7 @@ use App\Http\Requests\Api\UpdatePostRequest;
 use App\Http\Resources\PostCollection;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
-use App\Models\Tag;
+use App\Services\PostService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -36,53 +36,15 @@ class PostController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StorePostRequest $request)
+    public function store(StorePostRequest $request, PostService $postService)
     {
+        $this->authorize('create', Post::class);
+
         $data = $request->safe()
             ->merge(['user_id' => Auth::id()])
             ->except('cover', 'tags');
 
-        $post = Post::create($data);
-
-        if ($request->filled('tags')) {
-
-            $dataIn = Tag::whereIn('name', $request->tags)->pluck('name', 'id');
-
-            $newTags = $request->collect('tags')
-                ->diff($dataIn)
-                ->map(function ($value) {
-                    return ['name' => $value];
-                });
-
-            if (!$newTags->isEmpty()) {
-
-                $createdTags = $post->tags()->createMany($newTags);
-
-                $arrTags = collect($createdTags)->pluck('name', 'id');
-
-                $tagsID = $dataIn->union($arrTags)->keys();
-
-                $post->tags()->sync($tagsID);
-            } else {
-                $post->tags()->attach($dataIn->keys());
-            }
-
-            $post->load('tags');
-        }
-
-        if ($request->hasFile('cover')) {
-
-            $covers = [];
-
-            foreach ($request->file('cover') as $file) {
-
-                if ($file->isValid()) {
-                    $covers[] = ['cover' => $file->store('public/covers')];
-                }
-            }
-
-            $post->images()->createMany($covers);
-        }
+        $post = $postService->create($request, $data);
 
         return new PostResource($post);
     }
@@ -105,36 +67,9 @@ class PostController extends Controller
      * @param \App\Models\Post $post
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatePostRequest $request, Post $post)
+    public function update(UpdatePostRequest $request, Post $post, PostService $postService)
     {
-        $post->update($request->safe()->except('cover', 'tags'));
-
-        if ($request->filled('tags')) {
-
-            $dataIn = Tag::whereIn('name', $request->tags)->pluck('name', 'id');
-
-            $newTags = $request->collect('tags')
-                ->diff($dataIn)
-                ->map(function ($value) {
-                    return ['name' => $value];
-                });
-
-            if (!$newTags->isEmpty()) {
-
-                $post->tags()->createMany($newTags);
-
-                $tagsID = $post->tags()->allRelatedIds();
-            } else {
-
-                $tagsID = $post
-                    ->tags()
-                    ->pluck('name', 'id')
-                    ->union($dataIn)
-                    ->keys();
-            }
-
-            $post->tags()->sync($tagsID);
-        }
+        $post = $postService->update($request, $post);
 
         return new PostResource($post);
     }

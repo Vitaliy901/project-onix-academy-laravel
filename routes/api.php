@@ -21,11 +21,13 @@ Route::middleware('auth:sanctum')->group(function () {
 		'/posts/my' => PostController::class,
 		'/posts/search' => PostController::class
 	]);
+
+	Route::delete('/logout', [AuthController::class, 'logout']);
 });
 
 Route::apiResource('/users', UserController::class);
 
-Route::middleware('throttle:3,1')->group(function () {
+Route::middleware('throttle:6,1')->group(function () {
 	Route::post('/register', [AuthController::class, 'create']);
 	Route::post('/login', [AuthController::class, 'login']);
 });

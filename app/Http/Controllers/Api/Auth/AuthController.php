@@ -3,78 +3,48 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Auth\CreateRequest;
+use App\Http\Requests\Api\Auth\LoginRequest;
+use App\Http\Traits\HttpResponse;
 use App\Models\User;
-use Illuminate\Auth\Events\Validated;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
-	public function create(Request $request)
+	use HttpResponse;
+
+	public function create(CreateRequest $request, UserService $userService)
 	{
-		$validator = Validator::make($request->all(), [
-			'name' => ['required', 'string', 'max:255'],
-			'email' => ['required', 'string', 'email:rfc,dns', 'max:255', 'unique:users'],
-			'password' => ['required', Password::min(8)->letters()->mixedCase()->numbers()],
-		]);
+		$user = $userService->create($request->validated());
 
-		if ($validator->fails()) {
-			return response()->json([
-				'satatus' => false,
-				'message' => 'validation error',
-				'errors' => $validator->errors(),
-			], 401);
-		}
-
-		$data = $validator->validated();
-
-		$user = User::create([
-			'name' => $data['name'],
-			'email' => $data['email'],
-			'password' => Hash::make($data['password']),
-		]);
-
-		return response()->json([
-			'satatus' => true,
-			'message' => 'User created successfully!',
+		return $this->success([
+			'user' => $user,
 			'api_token' => $user->createToken('API Token', ['publish'])->plainTextToken,
-		], 401);
+		]);
 	}
 
-	public function login(Request $request)
+	public function login(LoginRequest $request)
 	{
-		$validator = Validator::make($request->all(), [
-			'email' => 'required|email',
-			'password' => 'required',
-		]);
+		$credentials = $request->validated();
 
-		if ($validator->fails()) {
-			return response()->json([
-				'satatus' => false,
-				'message' => 'validation error',
-				'errors' => $validator->errors(),
-			], 401);
-		}
-
-		$credentials = $validator->validated();
+		if (!Auth::attempt($credentials)) {
+			return $this->error('', 401, 'Credentials don`t matche');
+		};
 
 		$user = User::where('email', $request->email)->first();
 
-		if (Auth::attempt($credentials)) {
-			return response()->json([
-				'satatus' => true,
-				'message' => 'User logged in successfully!',
-				'api_token' => $user->createToken('API Token', ['publish'])->plainTextToken,
-			]);
-		};
+		return $this->success([
+			'user' => $user,
+			'api_token' => $user->createToken('API_token', ['publish'])->plainTextToken,
+		], 200, 'User logged in successfully!');
+	}
 
-		return response()->json([
-			'satatus' => true,
-			'message' => 'Email or password do not match our records.',
-		], 401);
+	public function logout(Request $request)
+	{
+		$request->user()->currentAccessToken()->delete();
+
+		return $this->success(null, 200, 'You have successfully been logged out!');
 	}
 }

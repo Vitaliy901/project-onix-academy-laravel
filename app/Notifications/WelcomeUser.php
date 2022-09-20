@@ -7,9 +7,13 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class WelcomeUser extends Notification
+class WelcomeUser extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    public $tries = 3;
+
+    public $backoff = 3;
 
     /**
      * Create a new notification instance.
@@ -40,15 +44,12 @@ class WelcomeUser extends Notification
      */
     public function toMail($notifiable)
     {
-        $mail = (new MailMessage)
-            ->subject('Registered')
-            ->greeting('Hello!!!');
-
         $name = $notifiable->full_name ? $notifiable->full_name : $notifiable->name;
 
-        $mail->line('Welcome ' . $name);
-
-        return $mail;
+        return (new MailMessage)
+            ->subject('Registered')
+            ->greeting('Hello!!!')
+            ->line('Welcome ' . $name);
     }
 
     /**

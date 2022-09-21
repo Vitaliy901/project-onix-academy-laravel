@@ -9,6 +9,7 @@ use App\Http\Requests\Api\UpdateUserRequest;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -73,13 +74,9 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateUserRequest $request, User $user)
+    public function update(UpdateUserRequest $request, User $user, UserService $userService)
     {
-        $credentials = $request->validated();
-
-        $credentials['password'] = Hash::make($request->password);
-
-        $user->update($credentials);
+        $userService->update($user, $request->safe());
 
         return new UserResource($user);
     }

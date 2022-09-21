@@ -10,7 +10,7 @@ trait HttpResponse
         string $message = 'Request was successful',
     ) {
         return response()->json([
-            'satatus' => true,
+            'status' => true,
             'message' => $message,
             'data' => $data
         ], $code);
@@ -22,7 +22,7 @@ trait HttpResponse
         string $message = 'Error has occurred',
     ) {
         return response()->json([
-            'satatus' => false,
+            'status' => false,
             'message' => $message,
             'data' => $data,
         ], $code);
